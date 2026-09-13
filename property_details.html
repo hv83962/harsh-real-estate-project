@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Details - Harsh Real Estate</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet Maps CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; color: #334155; }
+        .details-img { width: 100%; height: 420px; object-fit: cover; border-radius: 12px; }
+        .card-custom { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 25px; }
+        .spec-box { background: #f1f5f9; padding: 15px; border-radius: 8px; text-align: center; }
+        #propertyMap { height: 320px; border-radius: 10px; z-index: 1; }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-light bg-white border-bottom py-3">
+    <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="index.html">
+            <span class="fs-4 text-primary">🏠</span> Harsh Real Estate
+        </a>
+        <a href="index.html" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back to Listings</a>
+    </div>
+</nav>
+
+<div class="container my-5" id="mainContainer">
+    <div class="text-center py-5" id="loader"><h4>Loading property details...</h4></div>
+
+    <div class="row g-4 d-none" id="detailsSection">
+        <!-- Main Column: Info, Specs, Map, EMI Calculator -->
+        <div class="col-lg-8">
+            <img id="p_img" src="" class="details-img shadow-sm mb-4" alt="Property">
+            
+            <div class="card-custom mb-4">
+                <span class="badge bg-primary px-3 py-2 mb-2" id="p_type"></span>
+                <h2 class="fw-bold mb-2" id="p_title"></h2>
+                <p class="text-muted fs-6 mb-3"><i class="bi bi-geo-alt-fill text-danger me-1"></i> <span id="p_location"></span></p>
+                <h3 class="text-primary fw-bold mb-4" id="p_price"></h3>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-4">
+                        <div class="spec-box">
+                            <i class="bi bi-door-closed fs-3 text-primary"></i>
+                            <div class="fw-bold mt-1" id="p_beds"></div>
+                            <small class="text-muted">Bedrooms</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="spec-box">
+                            <i class="bi bi-water fs-3 text-primary"></i>
+                            <div class="fw-bold mt-1" id="p_baths"></div>
+                            <small class="text-muted">Bathrooms</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="spec-box">
+                            <i class="bi bi-arrows-fullscreen fs-3 text-primary"></i>
+                            <div class="fw-bold mt-1" id="p_area"></div>
+                            <small class="text-muted">Square Feet</small>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-2">Description</h5>
+                <p class="text-secondary" id="p_desc"></p>
+            </div>
+
+            <!-- Leaflet Map -->
+            <div class="card-custom mb-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-geo-alt-fill text-danger me-2"></i>Property Location Map</h5>
+                <div id="propertyMap" class="border"></div>
+            </div>
+
+            <!-- Home Loan EMI Calculator -->
+            <div class="card-custom mb-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-calculator-fill text-primary me-2"></i>Home Loan EMI Calculator</h5>
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold text-muted">Loan Amount (₹)</label>
+                        <input type="number" id="emi_amount" class="form-control" placeholder="Loan Amount">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold text-muted">Interest Rate (% p.a.)</label>
+                        <input type="number" id="emi_rate" class="form-control" value="8.5" step="0.1">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold text-muted">Tenure (Years)</label>
+                        <input type="number" id="emi_tenure" class="form-control" value="20">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" onclick="calculateEMI()" class="btn btn-primary w-100 fw-semibold">Calculate</button>
+                    </div>
+                </div>
+                <div id="emiResult" class="mt-3 p-3 bg-light rounded-3 d-none">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted fw-semibold">Estimated Monthly EMI:</span>
+                        <span class="text-primary fw-bold fs-4" id="monthlyEMI">₹0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar: Owner Contact & Enquiry -->
+        <div class="col-lg-4">
+            <div class="card-custom sticky-top" style="top: 20px;">
+                <h5 class="fw-bold mb-3">Owner Details</h5>
+                <p class="mb-1"><i class="bi bi-person-circle text-primary me-2"></i> <strong id="p_owner"></strong></p>
+                <p class="mb-3 text-muted small"><i class="bi bi-telephone-fill me-2"></i> <span id="p_phone"></span></p>
+                <hr>
+
+                <h5 class="fw-bold mb-3">Send an Enquiry</h5>
+                <div id="enquiryAlert"></div>
+                <form id="enquiryForm">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-muted">Your Message</label>
+                        <textarea id="enquiryMsg" class="form-control" rows="4" placeholder="I am interested in this property. Please contact me." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Submit Enquiry</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const propertyId = urlParams.get('id');
+const loggedUser = JSON.parse(localStorage.getItem('user'));
+
+// High-resolution architectural photography matching index.html 1-to-1
+const houseImages = [
+    'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1598228723793-52759bba239c?w=700&auto=format&fit=crop&q=80'
+];
+
+const cityCoords = {
+    'mumbai': [19.0760, 72.8777],
+    'bangalore': [12.9716, 77.5946],
+    'pune': [18.5204, 73.8567],
+    'delhi': [28.6139, 77.2090],
+    'ranchi': [23.3441, 85.3096],
+    'hyderabad': [17.3850, 78.4867],
+    'noida': [28.5355, 77.3910],
+    'thane': [19.2183, 72.9781]
+};
+
+let mapInstance = null;
+
+function renderMap(locationName, propertyTitle) {
+    let coords = [23.3441, 85.3096]; // Default Ranchi
+    const lowerLoc = (locationName || '').toLowerCase();
+
+    for (const [city, latlng] of Object.entries(cityCoords)) {
+        if (lowerLoc.includes(city)) {
+            coords = latlng;
+            break;
+        }
+    }
+
+    // Leaflet map container already initialized check & fix
+    if (mapInstance !== null) {
+        mapInstance.remove();
+    }
+
+    mapInstance = L.map('propertyMap').setView(coords, 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(mapInstance);
+
+    L.marker(coords).addTo(mapInstance)
+        .bindPopup(`<b>${propertyTitle}</b><br>${locationName}`)
+        .openPopup();
+}
+
+function calculateEMI() {
+    const P = parseFloat(document.getElementById('emi_amount').value);
+    const annualRate = parseFloat(document.getElementById('emi_rate').value);
+    const tenureYears = parseFloat(document.getElementById('emi_tenure').value);
+
+    if (isNaN(P) || P <= 0) return;
+
+    const r = (annualRate / 12) / 100;
+    const n = tenureYears * 12;
+    const emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+
+    document.getElementById('emiResult').classList.remove('d-none');
+    document.getElementById('monthlyEMI').textContent = `₹${Math.round(emi).toLocaleString('en-IN')}`;
+}
+
+async function loadDetails() {
+    if (!propertyId) {
+        document.getElementById('loader').innerHTML = '<div class="alert alert-danger">No property selected. <a href="index.html">Go Back</a></div>';
+        return;
+    }
+
+    try {
+        const res = await fetch(`api/property_details.php?id=${propertyId}`);
+        const result = await res.json();
+
+        if (result.status === 'success' && result.data) {
+            const p = result.data;
+            document.getElementById('loader').classList.add('d-none');
+            document.getElementById('detailsSection').classList.remove('d-none');
+
+            // Exact 1-to-1 image binding with index.html
+            const propIdNum = parseInt(p.id, 10);
+            const imageIndex = (!isNaN(propIdNum) && propIdNum > 0) ? (propIdNum - 1) % houseImages.length : 0;
+            document.getElementById('p_img').src = (p.image && p.image !== 'default.jpg' && p.image.trim() !== '') 
+                ? 'assets/images/' + p.image 
+                : houseImages[imageIndex];
+
+            document.getElementById('p_type').textContent = p.type || 'Property';
+            document.getElementById('p_title').textContent = p.title || 'Untitled Property';
+            document.getElementById('p_location').textContent = p.location || 'Location Not Specified';
+            document.getElementById('p_price').textContent = `₹${Number(p.price || 0).toLocaleString('en-IN')}`;
+            document.getElementById('p_beds').textContent = `${p.bedrooms || 0} BHK`;
+            document.getElementById('p_baths').textContent = `${p.bathrooms || 0} Baths`;
+            document.getElementById('p_area').textContent = p.area ? `${p.area} sqft` : 'N/A';
+            document.getElementById('p_desc').textContent = p.description || 'No detailed description provided.';
+            document.getElementById('p_owner').textContent = p.owner_name || 'Harsh Verma';
+            document.getElementById('p_phone').textContent = p.owner_phone || '+91 9876543210';
+
+            // Auto-fill loan amount (80%) and calculate initial EMI
+            document.getElementById('emi_amount').value = Math.round(Number(p.price || 0) * 0.8);
+            calculateEMI();
+
+            // Render Map with safe coordinates
+            renderMap(p.location, p.title);
+        } else {
+            document.getElementById('loader').innerHTML = `<div class="alert alert-danger">${result.message || 'Property details could not be found.'}</div>`;
+        }
+    } catch (err) {
+        document.getElementById('loader').innerHTML = `<div class="alert alert-danger">Server connection error. Ensure api/property_details.php exists.</div>`;
+    }
+}
+
+// Enquiry submission
+document.getElementById('enquiryForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const alertBox = document.getElementById('enquiryAlert');
+
+    if (!loggedUser) {
+        alertBox.innerHTML = '<div class="alert alert-warning py-2 small">Please <a href="auth.html">Login</a> first to send an enquiry.</div>';
+        return;
+    }
+
+    const payload = {
+        user_id: loggedUser.id,
+        property_id: propertyId,
+        message: document.getElementById('enquiryMsg').value
+    };
+
+    try {
+        const res = await fetch('api/submit_enquiry.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const resData = await res.json();
+
+        if (res.ok) {
+            alertBox.innerHTML = `<div class="alert alert-success py-2 small">${resData.message}</div>`;
+            document.getElementById('enquiryForm').reset();
+        } else {
+            alertBox.innerHTML = `<div class="alert alert-danger py-2 small">${resData.message}</div>`;
+        }
+    } catch (err) {
+        alertBox.innerHTML = '<div class="alert alert-danger py-2 small">Submission failed. Try again later.</div>';
+    }
+});
+
+loadDetails();
+</script>
+</body>
+</html>

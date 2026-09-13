@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harsh Real Estate - Find Your Dream Property</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Font (Poppins) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- React 18 & Babel for Interactive Components -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --dark-navy: #0f172a;
+            --card-border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* Modern Navbar */
+        .navbar-custom {
+            background: #ffffff;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            padding: 14px 0;
+        }
+
+        .brand-logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        .brand-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+
+        .brand-subtitle {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .nav-link-custom {
+            font-weight: 500;
+            color: #475569;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link-custom:hover {
+            color: var(--primary-color);
+        }
+
+        /* Hero Section */
+        .hero-banner {
+            position: relative;
+            min-height: 520px;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.5) 0%, rgba(15, 23, 42, 0.75) 100%), 
+                        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&auto=format&fit=crop&q=80') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            text-align: center;
+            padding: 60px 15px 120px 15px;
+        }
+
+        .hero-banner h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .hero-banner p {
+            font-size: 1.15rem;
+            color: #cbd5e1;
+            max-width: 680px;
+            margin: 12px auto 0 auto;
+        }
+
+        /* Modern Floating Filter Console */
+        .filter-wrapper {
+            margin-top: -70px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .filter-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+            padding: 24px 28px;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+
+        .filter-tab-btn {
+            border: none;
+            background: #f1f5f9;
+            color: #64748b;
+            font-weight: 600;
+            padding: 8px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-right: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .filter-tab-btn.active {
+            background: var(--primary-color);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
+        .filter-input-group {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            transition: border-color 0.2s ease;
+        }
+
+        .filter-input-group:focus-within {
+            border-color: var(--primary-color);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .filter-input-group i {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            margin-right: 10px;
+        }
+
+        .filter-input-group input, 
+        .filter-input-group select {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            font-size: 0.92rem;
+            color: #334155;
+            font-weight: 500;
+        }
+
+        .btn-search-trigger {
+            background: var(--primary-color);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            height: 100%;
+            min-height: 48px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-search-trigger:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            color: #ffffff;
+        }
+
+        /* Section Titles */
+        .section-header {
+            text-align: center;
+            margin: 70px 0 35px 0;
+        }
+
+        .section-badge {
+            background: #eff6ff;
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .section-header h2 {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+
+        /* Property Card */
+        .prop-card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+        }
+
+        .prop-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+            border-color: #cbd5e1;
+        }
+
+        .prop-card-img {
+            height: 220px;
+            width: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .prop-card:hover .prop-card-img {
+            transform: scale(1.03);
+        }
+
+        .prop-img-wrap {
+            overflow: hidden;
+            display: block;
+        }
+
+        .prop-price {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .spec-item {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .btn-view-details {
+            border: 1.5px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+            font-weight: 600;
+            font-size: 0.88rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-view-details:hover {
+            background: var(--primary-color);
+            color: #ffffff;
+        }
+
+        /* Footer */
+        .footer-main {
+            background: #0b1320;
+            color: #94a3b8;
+            padding: 70px 0 25px 0;
+            margin-top: 90px;
+        }
+
+        .footer-brand {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.92rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+            padding-left: 4px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 50px;
+            padding-top: 25px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 1. Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container">
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="index.html">
+            <div class="brand-logo-icon">
+                <i class="bi bi-buildings-fill"></i>
+            </div>
+            <div>
+                <div class="brand-title">HARSH REAL ESTATE</div>
+                <div class="brand-subtitle">Find & List Properties</div>
+            </div>
+        </a>
+
+        <!-- Center Links -->
+        <div class="collapse navbar-collapse justify-content-center" id="navbarMenu">
+            <ul class="navbar-nav gap-3">
+                <li class="nav-item"><a class="nav-link nav-link-custom active text-primary fw-semibold" href="index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-custom" href="#featuredSection">Properties</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-custom" href="about.html">About Us</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-custom" href="contact.html">Contact Us</a></li>
+            </ul>
+        </div>
+
+        <!-- Right User / Auth Status -->
+        <div class="d-flex align-items-center gap-3">
+            <span id="userBadge" class="text-dark small fw-semibold"></span>
+            <a href="auth.html" id="authBtn" class="btn btn-outline-primary btn-sm px-3 rounded-pill fw-semibold">Login / Register</a>
+        </div>
+    </div>
+</nav>
+
+<!-- 2. Hero Header Banner -->
+<header class="hero-banner">
+    <div class="container">
+        <h1>Find Your Dream Home</h1>
+        <p>Explore verified apartments, luxury villas, and prime plots tailored to your lifestyle and budget.</p>
+    </div>
+</header>
+
+<!-- 3. Floating Filter Console -->
+<section class="container filter-wrapper">
+    <div class="filter-card">
+        <!-- Purpose Tabs -->
+        <div class="d-flex align-items-center mb-3">
+            <button class="filter-tab-btn active" type="button" onclick="setPurpose('Buy', this)">Buy</button>
+            <button class="filter-tab-btn" type="button" onclick="setPurpose('Rent', this)">Rent</button>
+        </div>
+
+        <!-- Inputs Grid -->
+        <form id="filterForm" class="row g-3 align-items-center">
+            <!-- Location -->
+            <div class="col-lg-3 col-md-6">
+                <label class="form-label small text-muted fw-semibold mb-1">City or State</label>
+                <div class="filter-input-group">
+                    <i class="bi bi-geo-alt"></i>
+                    <input type="text" id="filter_loc" placeholder="e.g. Mumbai, Ranchi">
+                </div>
+            </div>
+
+            <!-- Type -->
+            <div class="col-lg-2 col-md-6">
+                <label class="form-label small text-muted fw-semibold mb-1">Property Type</label>
+                <div class="filter-input-group">
+                    <i class="bi bi-house-door"></i>
+                    <select id="filter_type">
+                        <option value="">All Types</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="House">House</option>
+                        <option value="Flat">Flat</option>
+                        <option value="Plot">Plot</option>
+                        <option value="Commercial">Commercial</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Bedrooms -->
+            <div class="col-lg-2 col-md-6">
+                <label class="form-label small text-muted fw-semibold mb-1">Bedrooms</label>
+                <div class="filter-input-group">
+                    <i class="bi bi-door-open"></i>
+                    <select id="filter_beds">
+                        <option value="">Any BHK</option>
+                        <option value="1">1 BHK</option>
+                        <option value="2">2 BHK</option>
+                        <option value="3">3 BHK</option>
+                        <option value="4">4+ BHK</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Max Price -->
+            <div class="col-lg-3 col-md-6">
+                <label class="form-label small text-muted fw-semibold mb-1">Max Budget</label>
+                <div class="filter-input-group">
+                    <i class="bi bi-currency-rupee"></i>
+                    <input type="number" id="filter_max_price" placeholder="Max Price (₹)">
+                </div>
+            </div>
+
+            <!-- Search Action -->
+            <div class="col-lg-2 col-md-12 d-flex align-items-end">
+                <button type="button" onclick="loadProperties()" class="btn btn-search-trigger w-100">
+                    <i class="bi bi-search"></i>
+                    <span>Search</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- 4. Featured Listings Grid -->
+<main class="container my-5" id="featuredSection">
+    <div class="section-header">
+        <span class="section-badge">Exclusive Selection</span>
+        <h2>FEATURED PROPERTIES</h2>
+        <div id="propCount" class="text-muted small mt-1"></div>
+    </div>
+    <div class="row g-4" id="propertyGrid">
+        <div class="text-center py-5 text-muted">Loading properties...</div>
+    </div>
+</main>
+
+<!-- 5. Interactive React Estimator Widget Container -->
+<div class="container my-5">
+    <div id="react-valuation-widget"></div>
+</div>
+
+<!-- 6. Professional Footer -->
+<footer class="footer-main">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Brand Info -->
+            <div class="col-lg-4 col-md-6">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="brand-logo-icon" style="width: 36px; height: 36px; font-size: 1.1rem;">
+                        <i class="bi bi-buildings-fill"></i>
+                    </div>
+                    <span class="text-white fw-bold fs-5">Harsh Real Estate</span>
+                </div>
+                <p class="small text-secondary pe-lg-4">
+                    Your premier platform for buying, renting, and selling residential and commercial properties with verified authenticity and transparent communication.
+                </p>
+                <div class="d-flex gap-3 text-secondary mt-3 fs-5">
+                    <a href="#" class="text-secondary"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-secondary"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-secondary"><i class="bi bi-linkedin"></i></a>
+                    <a href="#" class="text-secondary"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-lg-2 col-md-6 footer-links">
+                <h6 class="text-white fw-bold mb-3">Quick Links</h6>
+                <a href="index.html">Home</a>
+                <a href="#featuredSection">Featured Properties</a>
+                <a href="about.html">About Us</a>
+                <a href="contact.html">Contact Us</a>
+                <a href="admin.html">Admin Portal</a>
+            </div>
+
+            <!-- Categories -->
+            <div class="col-lg-3 col-md-6 footer-links">
+                <h6 class="text-white fw-bold mb-3">Categories</h6>
+                <a href="#" onclick="quickTypeFilter('Apartment')">Luxury Apartments</a>
+                <a href="#" onclick="quickTypeFilter('House')">Independent Villas</a>
+                <a href="#" onclick="quickTypeFilter('Flat')">Modern Flats</a>
+                <a href="#" onclick="quickTypeFilter('Commercial')">Commercial Spaces</a>
+            </div>
+
+            <!-- Contact -->
+            <div class="col-lg-3 col-md-6">
+                <h6 class="text-white fw-bold mb-3">Get in Touch</h6>
+                <p class="small text-secondary mb-2"><i class="bi bi-geo-alt-fill me-2"></i>Ranchi, Jharkhand, India</p>
+                <p class="small text-secondary mb-3"><i class="bi bi-envelope-fill me-2"></i>contact@harshrealestate.com</p>
+                <div class="input-group input-group-sm">
+                    <input type="email" class="form-control bg-dark border-secondary text-white" placeholder="Enter your email">
+                    <button class="btn btn-primary" type="button">Subscribe</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom d-flex flex-wrap justify-content-between align-items-center">
+            <div>© 2026 Harsh Real Estate. All rights reserved.</div>
+            <div class="text-secondary">Designed & Developed by Harsh Verma</div>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Vanilla JS Application Logic -->
+<script>
+// Architectural photography pool
+const houseImages = [
+    'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=700&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1598228723793-52759bba239c?w=700&auto=format&fit=crop&q=80'
+];
+
+// Check active session from LocalStorage
+const loggedUser = JSON.parse(localStorage.getItem('user'));
+if (loggedUser) {
+    document.getElementById('userBadge').innerHTML = `
+        <a href="dashboard.html" class="text-decoration-none text-dark fw-semibold me-2">
+            <i class="bi bi-person-circle text-primary"></i> ${loggedUser.name} (Dashboard)
+        </a>
+    `;
+    const authBtn = document.getElementById('authBtn');
+    authBtn.textContent = 'Logout';
+    authBtn.className = 'btn btn-outline-danger btn-sm px-3 rounded-pill fw-semibold';
+    authBtn.href = "#";
+    authBtn.onclick = () => {
+        localStorage.removeItem('user');
+        window.location.reload();
+    };
+}
+
+// Purpose tab toggle
+let currentPurpose = 'Buy';
+function setPurpose(purpose, btn) {
+    currentPurpose = purpose;
+    document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    if (purpose === 'Rent') {
+        document.getElementById('filter_max_price').placeholder = "Max Rent (e.g. 50000)";
+    } else {
+        document.getElementById('filter_max_price').placeholder = "Max Price (₹)";
+    }
+    loadProperties();
+}
+
+function quickTypeFilter(type) {
+    document.getElementById('filter_type').value = type;
+    document.getElementById('featuredSection').scrollIntoView({ behavior: 'smooth' });
+    loadProperties();
+}
+
+// Toggle Favourites Handler (Bookmark)
+async function toggleFav(propId, btn) {
+    if (!loggedUser) {
+        alert("Please login to save properties to your favourites!");
+        window.location.href = "auth.html";
+        return;
+    }
+
+    try {
+        const res = await fetch(`api/favourites.php?action=toggle&user_id=${loggedUser.id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ property_id: propId })
+        });
+        const result = await res.json();
+
+        const icon = btn.querySelector('i');
+        if (result.status === 'added') {
+            icon.classList.remove('bi-heart', 'text-secondary');
+            icon.classList.add('bi-heart-fill', 'text-danger');
+        } else if (result.status === 'removed') {
+            icon.classList.remove('bi-heart-fill', 'text-danger');
+            icon.classList.add('bi-heart', 'text-secondary');
+        }
+    } catch (err) {
+        console.error("Failed to toggle favourite", err);
+    }
+}
+
+// Fetch properties dynamically via AJAX
+async function loadProperties() {
+    const loc = document.getElementById('filter_loc').value;
+    const type = document.getElementById('filter_type').value;
+    const maxPrice = document.getElementById('filter_max_price').value;
+    const beds = document.getElementById('filter_beds').value;
+
+    const query = new URLSearchParams({ 
+        location: loc, 
+        type: type, 
+        max_price: maxPrice, 
+        bedrooms: beds 
+    });
+    
+    try {
+        // Fetch current user's saved favourites
+        let savedFavIds = [];
+        if (loggedUser) {
+            try {
+                const favRes = await fetch(`api/favourites.php?user_id=${loggedUser.id}`);
+                const favData = await favRes.json();
+                if (favData.status === 'success' && Array.isArray(favData.data)) {
+                    savedFavIds = favData.data.map(f => Number(f.id));
+                }
+            } catch (e) {
+                console.warn("Could not fetch initial favourites", e);
+            }
+        }
+
+        const res = await fetch('api/fetch_properties.php?' + query.toString());
+        const data = await res.json();
+        const grid = document.getElementById('propertyGrid');
+        const countBadge = document.getElementById('propCount');
+
+        if (data.status === 'success' && data.data.length > 0) {
+            // Filter by Rent/Buy purpose tab selection
+            let properties = data.data;
+            if (currentPurpose === 'Rent') {
+                properties = properties.filter(p => 
+                    p.purpose === 'Rent' || 
+                    Number(p.price) <= 100000 || 
+                    (p.title && p.title.toLowerCase().includes('rent')) || 
+                    (p.description && p.description.toLowerCase().includes('rent'))
+                );
+            } else {
+                properties = properties.filter(p => 
+                    p.purpose !== 'Rent' && 
+                    Number(p.price) > 100000 && 
+                    !(p.title && p.title.toLowerCase().includes('rent'))
+                );
+            }
+
+            countBadge.textContent = `${properties.length} Available Listings Found`;
+
+            if (properties.length === 0) {
+                grid.innerHTML = '<div class="col-12 text-center text-muted py-5"><h5>No properties found matching this criteria.</h5><p>Try switching to ' + (currentPurpose === 'Rent' ? 'Buy' : 'Rent') + ' or adjusting your search parameters.</p></div>';
+                return;
+            }
+
+            grid.innerHTML = properties.map((p, index) => {
+                const imgUrl = (p.image && p.image !== 'default.jpg') 
+                    ? 'assets/images/' + p.image 
+                    : houseImages[index % houseImages.length];
+
+                const isFav = savedFavIds.includes(Number(p.id));
+
+                // Purpose detection for explicit card labeling
+                const isRent = (p.purpose === 'Rent') || (Number(p.price) <= 100000) || (p.title && p.title.toLowerCase().includes('rent'));
+                const purposeLabel = isRent ? 'FOR RENT' : 'FOR SALE';
+                const purposeBadgeClass = isRent ? 'bg-success' : 'bg-primary';
+                const pricePeriod = isRent ? '<small class="text-muted fw-normal fs-6">/month</small>' : '';
+
+                return `
+                <div class="col-lg-4 col-md-6">
+                    <div class="prop-card h-100 position-relative d-flex flex-column">
+                        
+                        <!-- Dual Badges: Purpose & Property Type -->
+                        <div class="position-absolute top-0 start-0 m-3 d-flex gap-1" style="z-index: 2;">
+                            <span class="badge ${purposeBadgeClass} text-uppercase px-2 py-1 shadow-sm fw-semibold" style="font-size: 0.72rem;">
+                                ${purposeLabel}
+                            </span>
+                            <span class="badge bg-dark bg-opacity-75 text-uppercase px-2 py-1 shadow-sm" style="font-size: 0.72rem;">
+                                ${p.type}
+                            </span>
+                        </div>
+
+                        <!-- Wishlist Button -->
+                        <button type="button" 
+                                onclick="toggleFav(${p.id}, this)" 
+                                class="btn btn-sm bg-white position-absolute top-0 end-0 m-3 rounded-circle shadow-sm border-0 d-flex align-items-center justify-content-center" 
+                                style="width: 36px; height: 36px; z-index: 5;" 
+                                title="Save to Favourites">
+                            <i class="bi ${isFav ? 'bi-heart-fill text-danger' : 'bi-heart text-secondary'} fs-6"></i>
+                        </button>
+
+                        <!-- Property Photo -->
+                        <a href="property_details.html?id=${p.id}" class="prop-img-wrap">
+                            <img src="${imgUrl}" class="prop-card-img" alt="${p.title}">
+                        </a>
+
+                        <!-- Card Content -->
+                        <div class="p-3 d-flex flex-column flex-grow-1">
+                            <div class="prop-price mb-1">₹${Number(p.price).toLocaleString('en-IN')} ${pricePeriod}</div>
+                            <h5 class="fw-bold text-truncate mb-1">
+                                <a href="property_details.html?id=${p.id}" class="text-decoration-none text-dark" title="${p.title}">
+                                    ${p.title}
+                                </a>
+                            </h5>
+                            <p class="text-muted small mb-2"><i class="bi bi-geo-alt-fill text-danger me-1"></i>${p.location}</p>
+                            <p class="text-secondary small mb-3 flex-grow-1 text-truncate">${p.description || 'Exclusive listing with premium fittings and convenient accessibility.'}</p>
+                            
+                            <div class="d-flex justify-content-between pt-2 border-top mb-3">
+                                <span class="spec-item"><i class="bi bi-door-closed me-1"></i>${p.bedrooms} Beds</span>
+                                <span class="spec-item"><i class="bi bi-water me-1"></i>${p.bathrooms} Baths</span>
+                                <span class="spec-item"><i class="bi bi-arrows-fullscreen me-1"></i>${p.area ? p.area + ' sqft' : 'N/A'}</span>
+                            </div>
+
+                            <a href="property_details.html?id=${p.id}" class="btn btn-view-details w-100 py-2 rounded-3">
+                                <i class="bi bi-eye me-1"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        } else {
+            countBadge.textContent = '0 Listings';
+            grid.innerHTML = '<div class="col-12 text-center text-muted py-5"><h5>No properties found matching your search.</h5><p>Try resetting the filter criteria or searching another city.</p></div>';
+        }
+    } catch (err) {
+        document.getElementById('propertyGrid').innerHTML = '<div class="col-12 text-center text-danger py-5">Failed to load listings. Check API endpoint.</div>';
+    }
+}
+
+// Initial fetch call
+loadProperties();
+</script>
+
+<!-- React 18 Interactive Valuation Component Script -->
+<script type="text/babel">
+function PropertyValuationWidget() {
+    const [sqft, setSqft] = React.useState(1500);
+    const [ratePerSqft, setRatePerSqft] = React.useState(5000);
+
+    const estimatedValue = sqft * ratePerSqft;
+    const loanAmount = estimatedValue * 0.8;
+    const annualRate = 0.085;
+    const monthlyRate = annualRate / 12;
+    const tenureMonths = 240; // 20 years
+
+    const estimatedEMI = Math.round((loanAmount * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths)) / (Math.pow(1 + monthlyRate, tenureMonths) - 1));
+
+    return (
+        <div className="card border-0 shadow-sm rounded-4 p-4" style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', color: '#ffffff' }}>
+            <div className="d-flex align-items-center justify-content-between mb-3">
+                <div className="d-flex align-items-center gap-2">
+                    <span className="badge bg-primary px-3 py-2 rounded-pill">React 18 Component</span>
+                    <h5 className="fw-bold m-0 text-white">Instant Property Price & EMI Estimator</h5>
+                </div>
+                <small className="text-secondary">Real-Time Client-Side Calculation</small>
+            </div>
+
+            <div className="row g-4 align-items-center">
+                <div className="col-md-4">
+                    <label className="small text-light fw-semibold mb-1">Built-up Area: <span className="text-primary fw-bold">{sqft} sqft</span></label>
+                    <input 
+                        type="range" 
+                        className="form-range" 
+                        min="300" 
+                        max="6000" 
+                        step="50" 
+                        value={sqft} 
+                        onChange={(e) => setSqft(Number(e.target.value))} 
+                    />
+                    <div className="d-flex justify-content-between text-muted" style={{ fontSize: '0.75rem' }}>
+                        <span>300 sqft</span>
+                        <span>6,000 sqft</span>
+                    </div>
+                </div>
+
+                <div className="col-md-4">
+                    <label className="small text-light fw-semibold mb-1">Avg Rate: <span className="text-primary fw-bold">₹{ratePerSqft} / sqft</span></label>
+                    <input 
+                        type="range" 
+                        className="form-range" 
+                        min="2000" 
+                        max="25000" 
+                        step="250" 
+                        value={ratePerSqft} 
+                        onChange={(e) => setRatePerSqft(Number(e.target.value))} 
+                    />
+                    <div className="d-flex justify-content-between text-muted" style={{ fontSize: '0.75rem' }}>
+                        <span>₹2,000</span>
+                        <span>₹25,000</span>
+                    </div>
+                </div>
+
+                <div className="col-md-4">
+                    <div className="p-3 rounded-3 text-center" style={{ background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.12)' }}>
+                        <div className="small text-muted text-uppercase fw-semibold" style={{ letterSpacing: '1px' }}>Est. Property Value</div>
+                        <div className="fs-4 fw-bold text-success my-1">₹{estimatedValue.toLocaleString('en-IN')}</div>
+                        <div className="small text-light opacity-75">Est. Monthly EMI (80% loan): <strong className="text-warning">₹{estimatedEMI.toLocaleString('en-IN')}</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('react-valuation-widget'));
+root.render(<PropertyValuationWidget />);
+</script>
+</body>
+</html>
