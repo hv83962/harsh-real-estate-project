@@ -1,7 +1,9 @@
 # Harsh Real Estate - Web Platform
 
 A full-stack property listing and valuation portal built with PHP, MySQL, Bootstrap 5, and React 18.
+# Harsh Real Estate - Web Platform
 
+🌐 **Live Demo:** [https://harshproperty.infinityfreeapp.com/](https://harshproperty.infinityfreeapp.com/)
 ## 🌟 Key Features
 - **Property Discovery & Search:** Dynamic AJAX-based filters by location, type (Apartment, House, Flat, Commercial, Plot), BHK, and budget.
 - **Dual Purpose Listings:** Explicit categorization for **FOR SALE** and **FOR RENT** properties with custom badges and rental pricing.
